@@ -1,0 +1,28 @@
+{
+  "name": "ailo_backend",
+  "version": "1.0.0",
+  "description": "Test backend typescript",
+  "main": "dist/server.js",
+  "scripts": {
+    "start": "tsc && node dist/server.js",
+    "watch-ts": "tsc -w",
+    "build-ts": "tsc "
+  },
+  "keywords": [],
+  "author": "Ahmad Amirudin",
+  "license": "ISC",
+  "dependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.14",
+    "@types/multer": "^1.4.9",
+    "bcrypt": "^5.1.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0"
+  }
+}
