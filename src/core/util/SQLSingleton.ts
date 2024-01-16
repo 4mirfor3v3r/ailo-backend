@@ -9,7 +9,7 @@ class SQLSingleton {
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASSWORD || '' ,
-      database: process.env.DB_NAME || 'db'
+      database: process.env.DB_NAME || 'ailo'
     });
   }
 
@@ -23,6 +23,11 @@ class SQLSingleton {
   public getConnection(): mysql.Connection {
     return this.connection;
   }
+
+  public query(sql: string, callback: (err: any, rows: any) => void): void {
+    this.connection.query(sql, callback);
+  }
+  
 }
 
-export default SQLSingleton.getInstance().getConnection();
+export default SQLSingleton;

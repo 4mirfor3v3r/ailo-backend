@@ -1,16 +1,15 @@
-import { MongoSingleton } from './core/util/MongoSingleton';
+import SQLSingleton from './core/util/SQLSingleton';
 import { Kernel } from './core/kernel/Kernel'
 import { IController } from './core/shared/IController';
 
 export class App {
     _kernel:Kernel
-    _mongoSingleton:MongoSingleton
+    _sqlSingleton:SQLSingleton
     constructor(_c:IController[]){
         this._kernel = new Kernel()
         this.initEnvironment()
         this.initController(_c)
-        
-        this._mongoSingleton = new MongoSingleton()
+        this._sqlSingleton = SQLSingleton.getInstance()
         this.connectStorage()
     }
     private initController(_c:IController[]){
@@ -19,7 +18,7 @@ export class App {
         })
     }
     private connectStorage(){
-        this._mongoSingleton.connect()
+        this._sqlSingleton.getConnection()
     }
     private initEnvironment(){
         this._kernel.initEnvironment()
