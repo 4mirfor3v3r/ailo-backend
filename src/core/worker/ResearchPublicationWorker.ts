@@ -2,7 +2,7 @@ import SQLSingleton from '../util/SQLSingleton';
 import { BaseResponse } from '../util/BaseResponse';
 
 export default class ResearchPublicationWorker {
-    getAllResearchPublication(): Promise<BaseResponse<ResearchPublication[]>> {
+    getAllResearchPublication(): Promise<BaseResponse<ResearchPublications[]>> {
         return new Promise((resolve, reject) => {
             SQLSingleton.getInstance().query('SELECT * FROM research_publication', (err, result) => {
                 if (err) {
@@ -13,7 +13,7 @@ export default class ResearchPublicationWorker {
         });
     }
 
-    getResearchPublicationById(id: number): Promise<BaseResponse<ResearchPublication>> {
+    getResearchPublicationById(id: number): Promise<BaseResponse<ResearchPublications>> {
         return new Promise((resolve, reject) => {
             SQLSingleton.getInstance().query(`SELECT * FROM research_publication WHERE id = ${id}`, (err, result) => {
                 if (err) {

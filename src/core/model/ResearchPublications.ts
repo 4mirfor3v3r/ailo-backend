@@ -1,4 +1,4 @@
-class ResearchPublication {
+class ResearchPublications {
     title: string;
     authors: string;
     publicationDate: Date;
@@ -16,6 +16,6 @@ class ResearchPublication {
         this.link = link;
     }
     static getInstace(title: string, authors: string, publicationDate: Date, publisher: string, abstract: string, keywords: string, link: string) {
-        return new ResearchPublication(title, authors, publicationDate, publisher, abstract, keywords, link);
+        return new ResearchPublications(title, authors, publicationDate, publisher, abstract, keywords, link);
     }
 }
