@@ -15,6 +15,7 @@ export class EventController implements IController {
   initRouter() {
     this.router.get(`${this.path}/get-all`, this.getAllEvents);
     this.router.get(`${this.path}/get/:id`, this.getEventById);
+    
   }
 
 

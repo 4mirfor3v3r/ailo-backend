@@ -1,12 +1,12 @@
 class Events {
-    title: string;
+    eventTitle: string;
     eventType: string;
     eventDescription: string;
     eventTime: Date;
     eventPoster: Blob;
     eventLink: string;
-    constructor(title: string, eventType: string, eventDescription: string, eventTime: Date, eventPoster: Blob, eventLink: string) {
-        this.title = title;
+    constructor(eventTitle: string, eventType: string, eventDescription: string, eventTime: Date, eventPoster: Blob, eventLink: string) {
+        this.eventTitle = eventTitle;
         this.eventType = eventType;
         this.eventDescription = eventDescription;
         this.eventTime = eventTime;
