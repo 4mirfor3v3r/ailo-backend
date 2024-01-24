@@ -1,8 +1,15 @@
-import { UserController } from './core/controller/UserController';
-import { App } from './App'
+import { App } from './App';
+import { MemberController } from './core/controller/MemberController';
+import { ResearchPublicationController } from './core/controller/ResearchPublicationController';
+import { PatentController } from './core/controller/PatentController';
+import { EventController } from './core/controller/EventController';
 
-// List of Controller
+// List of Controllers
 const app = new App([
-    new UserController()
-])
-app.listen()
+  new MemberController(),
+  new ResearchPublicationController(),
+  new PatentController(),
+  new EventController(),
+]);
+
+app.listen();
