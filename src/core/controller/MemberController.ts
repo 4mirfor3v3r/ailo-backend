@@ -4,7 +4,6 @@ import express from 'express';
 
 export class MemberController implements IController {
   path = '/member';
-  adminPath = '/admin/member'
   router = express.Router();
   _worker: MemberWorker;
 
@@ -14,10 +13,9 @@ export class MemberController implements IController {
   }
 
   initRouter() {
-    this.router.get(`${this.path}/get-all`, this.getAllMembers);
-    this.router.get(`${this.path}/get/:id`, this.getMemberById);
-    // this.router.post(`${this.path}/add`, this.addMember);
-    // this.router.put(`${this.path}/update`, this.updateMember);
+    this.router.get(`${this.path}`, this.getAllMembers);
+    this.router.get(`${this.path}/:member_id`, this.getMemberById);
+    
   }
 
 

@@ -53,31 +53,33 @@
     }
 
     private updatePatent = async (req: express.Request, res: express.Response) => {
-    try {
-      const patentId = Number(req.params.patent_id);
-      const updatedPatent: Patents = {
-        id: patentId,
-        title: req.body.title,
-        type: req.body.type,
-        no_patent: req.body.noPatent,
-        date: req.body.date,
-        status: req.body.status,
-      };
-
-      const patentData = await this._worker.updatePatent(patentId, updatedPatent);
-      res.json(patentData);
-    } catch (err) {
-      res.json(err);
+      try {
+        const patent_id = Number(req.params.patent_id);
+        const updatedPatent: Patents = {
+          patent_id,
+          patent_title: req.body.title,
+          patent_type: req.body.type,
+          no_patent: req.body.noPatent,
+          date: req.body.date,
+          patent_status: req.body.status,
+        };
+  
+        const patentData = await this._worker.updatePatent(patent_id, updatedPatent);
+        res.json(patentData);
+      } catch (err) {
+        res.json(err);
+      }
     }
-  }
 
 
 
     private deletePatent = async (req: express.Request, res: express.Response) => {
       try {
-        const patentData = await this._worker.deletePatent(Number(req.params.patent_id));
+        const patent_id = Number(req.params.patent_id);
+        const patentData = await this._worker.deletePatent(patent_id);
         res.json(patentData);
       } catch (err) {
-        res.json(err)
+        res.json(err);
       }
-    }}
+    }
+  }

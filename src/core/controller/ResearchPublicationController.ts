@@ -13,8 +13,8 @@ export class ResearchPublicationController implements IController {
     }
     
     initRouter() {
-        this.router.get(`${this.path}/get-all`, this.getAllResearchPublications);
-        this.router.get(`${this.path}/get/:id`, this.getResearchPublicationById);
+        this.router.get(`${this.path}`, this.getAllResearchPublications);
+        this.router.get(`${this.path}/:research_publication_id`, this.getResearchPublicationById);
     }
     
     private getAllResearchPublications = (
