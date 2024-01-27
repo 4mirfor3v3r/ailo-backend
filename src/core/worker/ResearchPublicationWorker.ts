@@ -32,6 +32,21 @@ export default class ResearchPublicationWorker {
         });
     }
 
+    getLatestResearchPublication(): Promise<BaseResponse<ResearchPublications[]>> {
+        return new Promise((resolve, reject) => {
+            SQLSingleton.getInstance().query('SELECT * FROM research_publication ORDER BY research_publication_date DESC LIMIT 3', (err, result) => {
+                if (err) {
+                    reject(err);
+                }
+                if (result && result.length > 0) {
+                    resolve(BaseResponse.success(result));
+                } else {
+                    resolve(BaseResponse.error('ResearchPublication not found'));
+                }
+            });
+        });
+    }
+
     SearchResearchPublication(title: string, description: string): Promise<BaseResponse<ResearchPublications[]>> {
         return new Promise((resolve, reject) => {
             const query = 'SELECT * FROM research_publication WHERE title LIKE ? OR description LIKE ?';

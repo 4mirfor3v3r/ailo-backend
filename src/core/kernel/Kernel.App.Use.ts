@@ -11,7 +11,7 @@ export class AppUse {
 		this.app.use(bodyParser.raw());
 		this.app.use(bodyParser.json());
 		this.app.use(bodyParser.text());
-		this.app.use(cors({ origin: true, credentials: true}));
+		this.app.use(cors({ origin: 'https://65b54d02b7d1d8c601756dca--heroic-gaufre-9f9278.netlify.app', credentials: true}));
 		// this.app.use(
 		// 	fileUpload({
 		// 		limits:{fileSize:10000000},

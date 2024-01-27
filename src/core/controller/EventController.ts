@@ -41,10 +41,6 @@ export class EventController implements IController {
     }
   }
 
-
-
-
-
   private getEventById = (req: express.Request, res: express.Response) => {
     this._worker
       .getEventById(Number(req.params.event_id))

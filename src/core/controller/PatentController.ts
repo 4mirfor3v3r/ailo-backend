@@ -49,10 +49,7 @@ export class PatentController implements IController {
 		}
 	};
 
-	private updatePatent = async (
-		req: express.Request,
-		res: express.Response,
-	) => {
+	private updatePatent = async (req: express.Request, res: express.Response, ) => {
 		try {
 			const patent_id = Number(req.params.patent_id);
 			const updatedPatent: Patents = {
@@ -74,10 +71,7 @@ export class PatentController implements IController {
 		}
 	};
 
-	private deletePatent = async (
-		req: express.Request,
-		res: express.Response,
-	) => {
+	private deletePatent = async (req: express.Request, res: express.Response, ) => {
 		try {
 			const patent_id = Number(req.params.patent_id);
 			const patentData = await this._worker.deletePatent(patent_id);

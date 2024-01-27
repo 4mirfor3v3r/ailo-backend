@@ -1,4 +1,5 @@
 import { IController } from "core/shared/IController";
+import ResearchAreaWorker from "../worker/ResearchAreaWorker";
 import ResearchPublicationWorker from "../worker/ResearchPublicationWorker";
 import express from "express";
 
@@ -6,18 +7,40 @@ export class ResearchPublicationController implements IController {
 	path = "/research-publication";
 	router = express.Router();
 	_worker: ResearchPublicationWorker;
+	_RAWorker: ResearchAreaWorker;
 
 	constructor() {
 		this._worker = new ResearchPublicationWorker();
+		this._RAWorker = new ResearchAreaWorker();
 		this.initRouter();
 	}
 
 	initRouter() {
-		this.router.get(`${this.path}`, this.getAllResearchPublications, this.searchResearchPublication);
+		
+		this.router.get(`${this.path}/all`, this.getAllResearchPublications);
+		this.router.get(`${this.path}/all`, this.searchResearchPublication);
+		this.router.get(`${this.path}/:research_area_title`, this.getResearchAreaTitle); // Research Area
+		this.router.get(`${this.path}`, this.getLatestResearchPublications);
 		this.router.get(`${this.path}/:research_publication_id`, this.getResearchPublicationById);
         this.router.delete(`${this.path}/:research_publication_id`, this.deleteResearchPublication);
         this.router.patch(`${this.path}/:research_publication_id`, this.updateResearchPublication);
 	}
+
+
+	private getResearchAreaTitle = (req: express.Request, res: express.Response) => {
+		const research_area_title = req.params.research_area_title;
+	
+		this._RAWorker
+			.getResearchAreaByTitle(research_area_title)
+			.then((data) => {
+				res.json(data);
+			})
+			.catch((error) => {
+				res.json(error);
+			});
+	};
+	
+
 
 	private getAllResearchPublications = (req: express.Request, res: express.Response ) => {
 		this._worker
@@ -29,6 +52,17 @@ export class ResearchPublicationController implements IController {
 				res.json(error);
 			});
 	};
+
+	private getLatestResearchPublications = (req: express.Request, res: express.Response) => {
+		this._worker
+			.getLatestResearchPublication()
+			.then((data) => {
+				res.json(data);
+			})
+			.catch((error) => {
+				res.json(error);
+			});
+	}
 
 	private getResearchPublicationById = (req: express.Request,res: express.Response) => {
 		const researchPublicationId = Number(req.params.id);
