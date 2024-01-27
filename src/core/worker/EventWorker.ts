@@ -51,12 +51,20 @@ export default class EventWorker {
 		});
 	}
 
-	getEventByFilter(category: string): Promise<BaseResponse<Events[]>> {
+	getEventByFilter(category: string, year: string, month: string): Promise<BaseResponse<Events[]>> {
 		return new Promise((resolve, reject) => {
 			let query = 'SELECT * FROM events WHERE 1';
 	
 			if (category) {
 				query += ` AND event_type = '${category}'`;
+			}
+	
+			if (year) {
+				query += ` AND YEAR(event_time) = ${year}`;
+			}
+	
+			if (month) {
+				query += ` AND MONTH(event_time) = ${month}`;
 			}
 	
 			SQLSingleton.getInstance().query(query, (err, result) => {

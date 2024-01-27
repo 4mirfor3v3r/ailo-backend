@@ -25,10 +25,12 @@ export class EventController implements IController {
 
   private getEvents = async (req: express.Request, res: express.Response) => {
     try {
-        const eventType = req.query.event_type as string;
+        const category = req.query.category as string;
+        const year = req.query.year as string;
+        const month = req.query.month as string;
 
-        if (eventType) {
-            const eventData = await this._worker.getEventByFilter(eventType);
+        if (category || year || month) {
+            const eventData = await this._worker.getEventByFilter(category, year, month);
             res.json(eventData);
         } else {
             const eventData = await this._worker.getAllEvent();
@@ -37,7 +39,9 @@ export class EventController implements IController {
     } catch (err) {
         res.json(err);
     }
-}
+  }
+
+
 
 
 
