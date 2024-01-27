@@ -14,7 +14,7 @@ export class EventController implements IController {
   }
 
   initRouter() {
-    this.router.get(`${this.path}`, this.getAllEvents);
+    this.router.get(`${this.path}`, this.getEvents);
     this.router.get(`${this.path}/:event_id`, this.getEventById);
     this.router.post(`${this.path}/:event_id`, this.addEvent);
     this.router.delete(`${this.path}/:event_id`, this.deleteEvent);
@@ -23,15 +23,23 @@ export class EventController implements IController {
   }
 
 
-  private getAllEvents = (req: express.Request, res: express.Response) => {
-    this._worker
-    .getAllEvent()
-    .then((data) => {
-      res.send(data);
-    }).catch((err) => {
-      res.send(err);
-    });
-  }
+  private getEvents = async (req: express.Request, res: express.Response) => {
+    try {
+        const eventType = req.query.event_type as string;
+
+        if (eventType) {
+            const eventData = await this._worker.getEventByFilter(eventType);
+            res.json(eventData);
+        } else {
+            const eventData = await this._worker.getAllEvent();
+            res.json(eventData);
+        }
+    } catch (err) {
+        res.json(err);
+    }
+}
+
+
 
   private getEventById = (req: express.Request, res: express.Response) => {
     this._worker

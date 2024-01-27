@@ -51,6 +51,26 @@ export default class EventWorker {
 		});
 	}
 
+	getEventByFilter(category: string): Promise<BaseResponse<Events[]>> {
+		return new Promise((resolve, reject) => {
+			let query = 'SELECT * FROM events WHERE 1';
+	
+			if (category) {
+				query += ` AND event_type = '${category}'`;
+			}
+	
+			SQLSingleton.getInstance().query(query, (err, result) => {
+				if (err) {
+					reject(err);
+				}
+				resolve(BaseResponse.success(result));
+			});
+		});
+	}
+	
+	
+
+
 	// UPDATE
 	updateEvent(event_id: number, updatedEvent: Events): Promise<BaseResponse<string>> {
 		return new Promise((resolve, reject) => {
