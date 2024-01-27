@@ -56,10 +56,14 @@ export default class PatentWorker {
           SQLSingleton.getInstance().query(
               `UPDATE patents SET ${setClause} WHERE patent_id = ${patent_id}`,
               (err, result) => {
-                  if (err) {
-                      reject(err);
-                  }
-                  resolve(BaseResponse.success('Patent updated'));
+                if (err) {
+                    reject(err);
+                }
+                if (result && result.affectedRows > 0) {
+                    resolve(BaseResponse.success('Patent updated'));
+                } else {
+                    resolve(BaseResponse.error('Patent not found'));
+                }
               }
           );
       });

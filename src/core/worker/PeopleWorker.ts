@@ -4,7 +4,7 @@ import { BaseResponse } from '../util/BaseResponse';
 export default class MemberWorker {
 
 	// READ
-    getAllMember(): Promise<BaseResponse<Members[]>> {
+    getAllMember(): Promise<BaseResponse<Peoples[]>> {
         return new Promise((resolve, reject) => {
 			SQLSingleton.getInstance().query('SELECT * FROM members', (err, result) => {
 				if (err) {
@@ -15,7 +15,7 @@ export default class MemberWorker {
 		});
     }
 
-	getMemberById(id: number): Promise<BaseResponse<Members>> {
+	getMemberById(id: number): Promise<BaseResponse<Peoples>> {
 		return new Promise((resolve, reject) => {
 			SQLSingleton.getInstance().query(`SELECT * FROM members WHERE id = ${id}`, (err, result) => {
 				if (err) {
@@ -50,7 +50,7 @@ export default class MemberWorker {
 
 
 	// DELETE
-	deleteMemberById(id: number): Promise<BaseResponse<Members>> {
+	deleteMemberById(id: number): Promise<BaseResponse<Peoples>> {
 		return new Promise((resolve, reject) => {
 			SQLSingleton.getInstance().query(`DELETE FROM members WHERE id = ${id}`, (err, result) => {
 				if (err) {

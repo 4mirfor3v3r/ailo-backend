@@ -1,4 +1,4 @@
-class Members {
+class Peoples {
 	name: string;
 	email: string;
 	password: string;
@@ -9,6 +9,8 @@ class Members {
 	}
 
 	static getInstace(name:string, email:string, password:string){
-		return new Members(name, email, password);
+		return new Peoples(name, email, password);
 	}
 }
+
+export default Peoples;

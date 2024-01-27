@@ -13,14 +13,13 @@ export class ResearchPublicationController implements IController {
 	}
 
 	initRouter() {
-		this.router.get(`${this.path}`, this.getAllResearchPublications);
+		this.router.get(`${this.path}`, this.getAllResearchPublications, this.searchResearchPublication);
 		this.router.get(`${this.path}/:research_publication_id`, this.getResearchPublicationById);
+        this.router.delete(`${this.path}/:research_publication_id`, this.deleteResearchPublication);
+        this.router.patch(`${this.path}/:research_publication_id`, this.updateResearchPublication);
 	}
 
-	private getAllResearchPublications = (
-		req: express.Request,
-		res: express.Response,
-	) => {
+	private getAllResearchPublications = (req: express.Request, res: express.Response ) => {
 		this._worker
 			.getAllResearchPublication()
 			.then((data) => {
@@ -31,10 +30,7 @@ export class ResearchPublicationController implements IController {
 			});
 	};
 
-	private getResearchPublicationById = (
-		req: express.Request,
-		res: express.Response,
-	) => {
+	private getResearchPublicationById = (req: express.Request,res: express.Response) => {
 		const researchPublicationId = Number(req.params.id);
 		this._worker
 			.getResearchPublicationById(researchPublicationId)
@@ -45,4 +41,39 @@ export class ResearchPublicationController implements IController {
 				res.json(error);
 			});
 	};
+
+    private searchResearchPublication = async (req: express.Request, res: express.Response) => {
+        try {
+            const searchQuery = req.query.search as string; 
+            const [title, description] = searchQuery.split('|');
+            const researchPublicationData = await this._worker.SearchResearchPublication(title, description);
+            res.json(researchPublicationData);
+        } catch (error) {
+            res.json(error);
+        }
+    }
+
+    private updateResearchPublication = async (req: express.Request, res: express.Response) => {
+        try {
+            const researchPublicationId = Number(req.params.id);
+            const updatedResearchPublication = req.body;
+            const researchPublicationData = await this._worker.updateResearchPublication(researchPublicationId, updatedResearchPublication);
+            res.json(researchPublicationData);
+        } catch (error) {
+            res.json(error);
+        }
+    }
+
+
+    private deleteResearchPublication = async (req: express.Request, res: express.Response) => {
+        try {
+            const researchPublicationId = Number(req.params.id);
+            const researchPublicationData = await this._worker.deleteResearchPublication(researchPublicationId);
+            res.json(researchPublicationData);
+        } catch (error) {
+            res.json(error);
+        }
+    };
+
+
 }
