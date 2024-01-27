@@ -50,24 +50,34 @@ export default class EventWorker {
 			});
 		});
 	}
-
 	getEventByFilter(category: string, year: string, month: string): Promise<BaseResponse<Events[]>> {
 		return new Promise((resolve, reject) => {
+			const validYear = /^\d{4}$/.test(year);
+			const validMonth = /^\d{1,2}$/.test(month) && parseInt(month) >= 1 && parseInt(month) <= 12;
+
+			if (!validYear || !validMonth) {
+				return resolve(BaseResponse.error('Invalid year or month'));
+			}
+
 			let query = 'SELECT * FROM events WHERE 1';
+			const params = [];
 	
-			if (category) {
-				query += ` AND event_type = '${category}'`;
+			if (category && typeof category === 'string') {
+				query += ' AND event_type = ?';
+				params.push(category);
 			}
 	
-			if (year) {
-				query += ` AND YEAR(event_time) = ${year}`;
+			if (year && /^\d{4}$/.test(year)) {
+				query += ' AND YEAR(event_date) = ?';
+				params.push(year);
 			}
 	
-			if (month) {
-				query += ` AND MONTH(event_time) = ${month}`;
+			if (month && /^\d{1,2}$/.test(month)) {
+				query += ' AND MONTH(event_date) = ?';
+				params.push(month);
 			}
 	
-			SQLSingleton.getInstance().query(query, (err, result) => {
+			SQLSingleton.getInstance().queryParam(query, params, (err, result) => {
 				if (err) {
 					reject(err);
 				}
@@ -75,6 +85,10 @@ export default class EventWorker {
 			});
 		});
 	}
+	
+	
+	
+	
 	
 	
 

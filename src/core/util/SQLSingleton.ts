@@ -27,6 +27,11 @@ class SQLSingleton {
   public query(sql: string, callback: (err: any, rows: any) => void): void {
     this.connection.query(sql, callback);
   }
+
+  public queryParam(sql: string, values: any[], callback: (err: any, rows: any) => void): void {
+    this.connection.query(sql, values, callback);
+}
+
   
 }
 
