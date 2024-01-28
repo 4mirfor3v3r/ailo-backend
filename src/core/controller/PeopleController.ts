@@ -21,7 +21,7 @@ export class PeopleController implements IController {
 
   private getAllPeoples = (req: express.Request, res: express.Response) => {
     this._worker
-      .getAllMember() 
+      .getAllPeoples() 
       .then((data) => {
         res.json(data);
       })
@@ -33,7 +33,7 @@ export class PeopleController implements IController {
   private getPeopleById = (req: express.Request, res: express.Response) => {
     const peopleId = Number(req.params.id); 
     this._worker
-      .getMemberById(peopleId) 
+      .getPeopleById(peopleId) 
       .then((data) => {
         res.json(data);
       })

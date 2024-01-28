@@ -18,6 +18,7 @@ export class ResearchPublicationController implements IController {
 	initRouter() {
 		
 		// Research Publication
+		this.router.get(`${this.path}`, this.getLatestResearchPublications);
 		this.router.get(`${this.path}/all`, this.getAllResearchPublications);
 		this.router.get(`${this.path}/all`, this.searchResearchPublication);
 		this.router.get(`${this.path}/all/:research_publication_id`, this.getResearchPublicationById);
@@ -26,13 +27,11 @@ export class ResearchPublicationController implements IController {
         this.router.patch(`${this.path}/all/:research_publication_id`, this.updateResearchPublication);
 
 		// Research Area
-		this.router.get(`${this.path}/research-areas`, this.getAllResearchArea);
-		this.router.get(`${this.path}/:research_area_short_name`, this.getResearchAreaDetails);
-		this.router.post(`${this.path}/:research_area_short_name`, this.addResearchArea);
-		this.router.patch(`${this.path}/:research_area_short_name`, this.updateResearchArea);
-		this.router.delete(`${this.path}/:research_area_short_name`, this.deleteResearchArea);
-		this.router.get(`${this.path}`, this.getLatestResearchPublications);
-
+		this.router.get(`${this.path}/research-area`, this.getAllResearchArea);
+		this.router.get(`${this.path}/research-area/:research_area_id`, this.getResearchPublicationByResearchAreaId);
+		this.router.post(`${this.path}/research-area/:research_area_id`, this.addResearchArea);
+		this.router.patch(`${this.path}/research-area/:research_area_id`, this.updateResearchArea);
+		this.router.delete(`${this.path}/research-area/:research_area_id`, this.deleteResearchArea);
 	}
 
 	// POST
@@ -68,37 +67,12 @@ export class ResearchPublicationController implements IController {
 				res.json(error);
 			});
 	}
-	
-	private getResearchAreaDetails = async (req: express.Request, res: express.Response) => {
-		const research_area_name = req.params.research_area_short_name;
-
-		try {
-			const researchAreaDetails = await this._RAWorker.getResearchAreaByTitle(research_area_name);
-	
-			if (researchAreaDetails.status === 'ok' && researchAreaDetails.response) {
-				const research_area_id = researchAreaDetails.response.research_area_id;
-	
-				const researchPublications = await this._worker.getAllResearchPublicationByResearchAreaId(research_area_id);
-	
-				res.json({
-					researchAreaDetails,
-					researchPublications,
-				});
-			} else {
-				res.json(researchAreaDetails);
-			}
-		} catch (error) {
-			res.status(500).json(error);
-		}
-	};
-	
-	
 
 
 	private getResearchPublicationByResearchAreaId = (req: express.Request, res: express.Response) => {
 		const researchAreaId = Number(req.params.research_area_id);
-		this._worker
-			.getAllResearchPublicationByResearchAreaId(researchAreaId)
+		this._RAWorker
+			.getResearchPublicationByAreaId(researchAreaId)
 			.then((data) => {
 				res.json(data);
 			})
@@ -107,6 +81,45 @@ export class ResearchPublicationController implements IController {
 			});
 
 	}
+	
+	// private getResearchAreaDetails = async (req: express.Request, res: express.Response) => {
+	// 	const research_area_name = req.params.research_area_short_name;
+
+	// 	try {
+	// 		const researchAreaDetails = await this._RAWorker.getResearchAreaByTitle(research_area_name);
+	
+	// 		if (researchAreaDetails.status === 'ok' && researchAreaDetails.response) {
+	// 			const research_area_id = researchAreaDetails.response.research_area_id;
+	
+	// 			const researchPublications = await this._worker.getAllResearchPublicationByResearchAreaId(research_area_id);
+	
+	// 			res.json({
+	// 				researchAreaDetails,
+	// 				researchPublications,
+	// 			});
+	// 		} else {
+	// 			res.json(researchAreaDetails);
+	// 		}
+	// 	} catch (error) {
+	// 		res.status(500).json(error);
+	// 	}
+	// };
+	
+	
+
+
+	// private getResearchPublicationByResearchAreaId = (req: express.Request, res: express.Response) => {
+	// 	const researchAreaId = Number(req.params.research_area_id);
+	// 	this._worker
+	// 		.getAllResearchPublicationByResearchAreaId(researchAreaId)
+	// 		.then((data) => {
+	// 			res.json(data);
+	// 		})
+	// 		.catch((error) => {
+	// 			res.json(error);
+	// 		});
+
+	// }
 	
 
 
@@ -173,7 +186,7 @@ export class ResearchPublicationController implements IController {
 
 	private updateResearchArea = async (req: express.Request, res: express.Response) => {
 		try {
-			const researchArea = req.params.research_area_short_name;
+			const researchAreaId = Number(req.params.research_area_id);
 			const updatedResearchArea = req.body;
 			const researchAreaData = await this._RAWorker.updateResearchArea(updatedResearchArea);
 			res.json(researchAreaData);
@@ -204,23 +217,21 @@ export class ResearchPublicationController implements IController {
 
 	private deleteResearchArea = async (req: express.Request, res: express.Response) => {
 		try {
-			const researchAreaShortName = req.params.research_area_short_name;
-	
-			const deletionResult = await this._RAWorker.deleteResearchArea(researchAreaShortName);
-	
+			const researchAreaId = Number(req.params.research_area_id);
+			const deletionResult = await this._RAWorker.deleteResearchArea(researchAreaId);
+
 			if (deletionResult.status === 'ok') {
 				res.json({
 					status: 'ok',
+					message: 'ResearchA rea deleted successfully'
 				});
 			} else {
 				res.json(deletionResult);
 			}
-		} catch (error) {
+		}
+		catch (error) {
 			res.status(500).json(error);
 		}
-	};
-	
-	
-	  
+	}
 
 }

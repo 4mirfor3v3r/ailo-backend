@@ -1,6 +1,7 @@
 import SQLSingleton from '../util/SQLSingleton';
 import { BaseResponse } from '../util/BaseResponse';
 import ResearchArea from "../model/ResearchAreas";
+import ResearchPublications from '../model/ResearchPublications';
 
 export default class ResearchAreaWorker {
 
@@ -34,102 +35,138 @@ export default class ResearchAreaWorker {
             });
         });
     }
+            
 
-    getResearchAreaByTitle(title: string): Promise<BaseResponse<ResearchArea>> {
+    getResearchPublicationByAreaId(publicationId: number): Promise<BaseResponse<ResearchArea | null>> {
         return new Promise((resolve, reject) => {
-            // Convert the human-readable title to the original data using regex
-            const originalData = title.replace(/-/g, ' ').toLowerCase();
+            const query = `
+                SELECT ra.*, rp.*
+                FROM research_areas ra
+                LEFT JOIN research_publication rp ON ra.research_area_id = rp.research_area_id
+                WHERE ra.research_area_id = ?;
+            `;
     
-            // Use the original data in the SQL query
-            SQLSingleton.getInstance().query(
-                `SELECT * FROM research_areas WHERE research_area_short_name = '${originalData}'`,
-                (err, result) => {
-                    if (err) {
-                        reject(err);
-                    }
-                    if (result && result.length > 0) {
-                        resolve(BaseResponse.success(result[0]));
-                    } else {
-                        resolve(BaseResponse.error('Research Area not found'));
-                    }
+            SQLSingleton.getInstance().queryParam(query, [publicationId], (err, result) => {
+                if (err) {
+                    reject(err);
                 }
-            );
+    
+                if (result && result.length > 0) {
+                    const areaData = result[0];
+                    const researchArea = new ResearchArea(
+                        areaData.research_area_id,
+                        areaData.research_area_name,
+                        areaData.research_area_short_name,
+                        areaData.research_area_description,
+                        areaData.research_area_icon,
+                        areaData.research_area_image,
+                        areaData.research_publication_id ? [new ResearchPublications(
+                            areaData.research_publication_id,
+                            areaData.research_area_id,
+                            areaData.research_publication_title,
+                            areaData.research_publication_abstract,
+                            areaData.research_publication_date,
+                            areaData.research_publication_link
+                        )] : []
+                    );
+    
+                    resolve(BaseResponse.success(researchArea));
+                } else {
+                    // If result is empty, return null with an empty array for publications
+                    resolve(BaseResponse.success(null));
+                }
+            });
         });
     }
-
-    getResearchAreaIdByTitle(title: string): Promise<BaseResponse<ResearchArea>> {
-        return new Promise((resolve, reject) => {
-            // Convert the human-readable title to the original data using regex
-            const originalData = title.replace(/-/g, ' ').toLowerCase();
     
-            // Use the original data in the SQL query
-            SQLSingleton.getInstance().query(
-                `SELECT research_area_id FROM research_areas WHERE research_area_short_title = '${originalData}'`,
-                (err, result) => {
-                    if (err) {
-                        reject(err);
-                    }
-                    if (result && result.length > 0) {
-                        resolve(BaseResponse.success(result[0]));
-                    } else {
-                        resolve(BaseResponse.error('Research Area not found'));
-                    }
-                }
-            );
-        });
-    }
+    
+    
+
+    // getResearchAreaById(id: number): Promise<BaseResponse<ResearchArea>> {
+    //     return new Promise((resolve, reject) => {
+    //         SQLSingleton.getInstance().query(`SELECT * FROM research_areas WHERE research_area_id = ${id}`, (err, result) => {
+    //             if (err) {
+    //                 reject(err);
+    //             }
+    //             if (result && result.length > 0) {
+    //                 resolve(BaseResponse.success(result[0]));
+    //             } else {
+    //                 resolve(BaseResponse.error('Research Area not found'));
+    //             }
+    //         });
+    //     });
+        
+    // }
+
+    // getResearchAreaIdByTitle(title: string): Promise<BaseResponse<ResearchArea>> {
+    //     return new Promise((resolve, reject) => {
+    //         // Convert the human-readable title to the original data using regex
+    //         const originalData = title.replace(/-/g, ' ').toLowerCase();
+    
+    //         // Use the original data in the SQL query
+    //         SQLSingleton.getInstance().query(
+    //             `SELECT research_area_id FROM research_areas WHERE research_area_short_title = '${originalData}'`,
+    //             (err, result) => {
+    //                 if (err) {
+    //                     reject(err);
+    //                 }
+    //                 if (result && result.length > 0) {
+    //                     resolve(BaseResponse.success(result[0]));
+    //                 } else {
+    //                     resolve(BaseResponse.error('Research Area not found'));
+    //                 }
+    //             }
+    //         );
+    //     });
+    // }
     
 
     // UPDATE
 
     updateResearchArea(researchArea: ResearchArea): Promise<BaseResponse<ResearchArea>> {
         return new Promise((resolve, reject) => {
-            const updatedFields = Object.entries(researchArea)
-                .filter(([key, value]) => value !== undefined && key !== 'research_area_id')    
-                .map(([key, value]) => `${key} = '${value}'`)
+            const { research_area_id, ...updateFields } = researchArea;
+            const setClauses = Object.keys(updateFields)
+                .map(field => `${field} = ?`)
                 .join(', ');
-
-            if (!updatedFields) {
-                resolve(BaseResponse.success(researchArea));
-                return;
-            }
-
-            SQLSingleton.getInstance().query(
-                `UPDATE research_areas SET ${updatedFields} WHERE research_area_short_name = '${researchArea.research_area_short_name}'`,
-                (err, result) => {
-                    if (err) {
-                        reject(err);
-                    }
-                    if (result && result.affectedRows > 0) {
-                        resolve(BaseResponse.success(researchArea));
-                    } else {
-                        resolve(BaseResponse.error('Failed to update Research Area'));
-                    }
+    
+            const query = `
+                UPDATE research_areas
+                SET ${setClauses}
+                WHERE research_area_id = ?;
+            `;
+    
+            const params = [...Object.values(updateFields), research_area_id];
+    
+            SQLSingleton.getInstance().queryParam(query, params, (err, result) => {
+                if (err) {
+                    reject(err);
                 }
-            );
+    
+                // Check if any rows were affected to determine if the update was successful
+                if (result && result.affectedRows > 0) {
+                    resolve(BaseResponse.success(researchArea));
+                } else {
+                    reject(new Error("Failed to update research area. No matching record found."));
+                }
+            });
         });
     }
-
-
-    deleteResearchArea(title: string): Promise<BaseResponse<ResearchArea>> {
-        return new Promise((resolve, reject) => {
-            // Convert the human-readable title to the original data using regex
-            const originalData = title.replace(/-/g, ' ').toLowerCase();
     
-            // Use the original data in the SQL query
-            SQLSingleton.getInstance().query(
-                `DELETE FROM research_areas WHERE research_area_short_name = '${originalData}'`,
-                (err, result) => {
-                    if (err) {
-                        reject(err);
-                    }
-                    if (result && result.affectedRows > 0) {
-                        resolve(BaseResponse.success(result[0]));
-                    } else {
-                        resolve(BaseResponse.error('Research Area not found'));
-                    }
+
+
+    deleteResearchArea(researchAreaId: number): Promise<BaseResponse<ResearchArea>> {
+        return new Promise((resolve, reject) => {
+            SQLSingleton.getInstance().query(`DELETE FROM research_areas WHERE research_area_id = ${researchAreaId}`, (err, result) => {
+                if (err) {
+                    reject(err);
                 }
-            );
+                if (result && result.length > 0) {
+                    resolve(BaseResponse.success(result[0]));
+                } else {
+                    resolve(BaseResponse.error('Research Area not found'));
+                }
+            });
         });
     }
     
