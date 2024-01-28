@@ -1,21 +1,19 @@
 class ResearchPublications {
-    title: string;
-    authors: string;
-    publicationDate: Date;
-    publisher: string;
-    abstract: string;
-    keywords: string;
-    link: string;
-    constructor(title: string, authors: string, publicationDate: Date, publisher: string, abstract: string, keywords: string, link: string) {
-        this.title = title;
-        this.authors = authors;
-        this.publicationDate = publicationDate;
-        this.publisher = publisher;
-        this.abstract = abstract;
-        this.keywords = keywords;
-        this.link = link;
-    }
-    static getInstace(title: string, authors: string, publicationDate: Date, publisher: string, abstract: string, keywords: string, link: string) {
-        return new ResearchPublications(title, authors, publicationDate, publisher, abstract, keywords, link);
+    research_publication_id: number;
+    research_area_id: number;
+    research_publication_title: string;
+    research_publication_abstract: string;
+    research_publication_date: Date;
+    research_publication_link: string;
+
+    constructor(research_publication_id: number, research_area_id: number, research_publication_title: string, research_publication_abstract: string, research_publication_date: Date, research_publication_link: string) {
+        this.research_publication_id = research_publication_id;
+        this.research_area_id = research_area_id;
+        this.research_publication_title = research_publication_title;
+        this.research_publication_abstract = research_publication_abstract;
+        this.research_publication_date = research_publication_date;
+        this.research_publication_link = research_publication_link;
     }
 }
+
+export default ResearchPublications;

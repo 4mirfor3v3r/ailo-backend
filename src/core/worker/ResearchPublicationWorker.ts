@@ -1,11 +1,28 @@
 import SQLSingleton from '../util/SQLSingleton';
 import { BaseResponse } from '../util/BaseResponse';
+import ResearchPublications from '../model/ResearchPublications';
 
 export default class ResearchPublicationWorker {
     
 
 
     // READ
+
+    getAllResearchPublicationByResearchAreaId(researchAreaId: number): Promise<BaseResponse<ResearchPublications[]>> {
+        return new Promise((resolve, reject) => {
+            SQLSingleton.getInstance().query(`SELECT * FROM research_publication WHERE research_area_id = ${researchAreaId}`, (err, result) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve(BaseResponse.success(result));
+            });
+        });
+    }
+
+
+
+
+    // READ ALL
     getAllResearchPublication(): Promise<BaseResponse<ResearchPublications[]>> {
         return new Promise((resolve, reject) => {
             SQLSingleton.getInstance().query('SELECT * FROM research_publication', (err, result) => {
@@ -19,7 +36,7 @@ export default class ResearchPublicationWorker {
 
     getResearchPublicationById(id: number): Promise<BaseResponse<ResearchPublications>> {
         return new Promise((resolve, reject) => {
-            SQLSingleton.getInstance().query(`SELECT * FROM research_publication WHERE id = ${id}`, (err, result) => {
+            SQLSingleton.getInstance().query(`SELECT * FROM research_publication WHERE research_publication_id = ${id}`, (err, result) => {
                 if (err) {
                     reject(err);
                 }
