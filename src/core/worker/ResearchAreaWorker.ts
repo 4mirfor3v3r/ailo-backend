@@ -37,6 +37,28 @@ export default class ResearchAreaWorker {
                 );
             });
         }
+
+        getResearchAreaIdByTitle(title: string): Promise<BaseResponse<ResearchArea>> {
+            return new Promise((resolve, reject) => {
+                // Convert the human-readable title to the original data using regex
+                const originalData = title.replace(/-/g, ' ').toLowerCase();
+        
+                // Use the original data in the SQL query
+                SQLSingleton.getInstance().query(
+                    `SELECT research_area_id FROM research_areas WHERE research_area_short_title = '${originalData}'`,
+                    (err, result) => {
+                        if (err) {
+                            reject(err);
+                        }
+                        if (result && result.length > 0) {
+                            resolve(BaseResponse.success(result[0]));
+                        } else {
+                            resolve(BaseResponse.error('Research Area not found'));
+                        }
+                    }
+                );
+            });
+        }
         
     
         // CREATE
