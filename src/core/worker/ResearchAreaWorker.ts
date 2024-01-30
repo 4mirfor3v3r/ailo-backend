@@ -24,6 +24,25 @@ export default class ResearchAreaWorker {
         });
     }
 
+    addImageResearchArea(researchArea: ResearchArea): Promise<BaseResponse<ResearchArea>> {
+        return new Promise((resolve, reject) => {
+            SQLSingleton.getInstance().queryParam(
+                `UPDATE research_areas SET research_area_image = ? WHERE research_area_id = ?`,
+                [researchArea.research_area_image, researchArea.research_area_id],
+                (err, result) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    if (result && result.affectedRows > 0) {
+                        resolve(BaseResponse.success(researchArea));
+                    } else {
+                        resolve(BaseResponse.error('Failed to add Research Area Image'));
+                    }
+                }
+            );
+        });
+    }
+
     // READ
     getAllResearchArea(): Promise<BaseResponse<ResearchArea[]>> {
         return new Promise((resolve, reject) => {

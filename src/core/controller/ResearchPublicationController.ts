@@ -19,6 +19,7 @@ export class ResearchPublicationController implements IController {
 		
 		// Research Publication
 		this.router.get(`${this.path}`, this.getLatestResearchPublications);
+		this.router.get(`${this.path}/search`, this.searchResearchPublication);
 		this.router.get(`${this.path}/all`, this.getAllResearchPublications);
 		this.router.get(`${this.path}/all`, this.searchResearchPublication);
 		this.router.get(`${this.path}/all/:research_publication_id`, this.getResearchPublicationById);
@@ -55,6 +56,23 @@ export class ResearchPublicationController implements IController {
 		}
 	}
 
+	// private addResearchAreaImage = async (req: express.Request, res: express.Response) => {
+	// 	try {
+	// 		const newResearchArea = req.body;
+	// 		// ... (your existing logic for handling the file and uploading to Firebase Storage)
+			
+
+	
+	// 		// Assuming you have the download URL of the uploaded image
+	// 		newResearchArea.research_area_image = 'https://example.com/path/to/image.jpg';
+	
+	// 		const researchAreaData = await this._RAWorker.addImageResearchArea(newResearchArea);
+	// 		res.json(researchAreaData);
+	// 	} catch (error) {
+	// 		res.json(error);
+	// 	}
+	// }
+	
 	// GET
 
 	private getAllResearchArea = (req: express.Request, res: express.Response) => {
@@ -158,18 +176,15 @@ export class ResearchPublicationController implements IController {
 	}
 
     private searchResearchPublication = async (req: express.Request, res: express.Response) => {
-        try {
-			const searchQuery = req.query.search as string;
-			const [title, description] = searchQuery.split('|');
-	
-			const researchPublicationData = await this._worker.SearchResearchPublication(title, description);
-	
-	
-			res.json({researchPublicationData});
+		try {
+			const searchQuery = req.query.q as string;
+
+			const searchResult = await this._worker.SearchResearchPublication(searchQuery);
+			res.json(searchResult);
 		} catch (error) {
-			res.status(500).json(error);
+			res.json(error);
 		}
-	};
+	}
 
 
 	// PATCH
@@ -185,6 +200,17 @@ export class ResearchPublicationController implements IController {
 	}
 
 	private updateResearchArea = async (req: express.Request, res: express.Response) => {
+		try {
+			const researchAreaId = Number(req.params.research_area_id);
+			const updatedResearchArea = req.body;
+			const researchAreaData = await this._RAWorker.updateResearchArea(updatedResearchArea);
+			res.json(researchAreaData);
+		} catch (error) {
+			res.json(error);
+		}
+	}
+
+	private updateResearchAreaImage = async (req: express.Request, res: express.Response) => {
 		try {
 			const researchAreaId = Number(req.params.research_area_id);
 			const updatedResearchArea = req.body;

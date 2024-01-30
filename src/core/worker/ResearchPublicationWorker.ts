@@ -78,10 +78,13 @@ export default class ResearchPublicationWorker {
         });
     }
 
-    SearchResearchPublication(title: string, description: string): Promise<BaseResponse<ResearchPublications[]>> {
+    SearchResearchPublication(searchQuery: string): Promise<BaseResponse<ResearchPublications[]>> {
         return new Promise((resolve, reject) => {
-            const query = 'SELECT * FROM research_publication WHERE title LIKE ? OR description LIKE ?';
-            const params = [`%${title}%`, `%${description}%`];
+            const query = `
+            SELECT * FROM research_publication
+            WHERE research_publication_title LIKE ? OR research_publication_abstract LIKE ?;
+            `;
+            const params = [`%${searchQuery}%`, `%${searchQuery}%`];
     
             SQLSingleton.getInstance().queryParam(query, params, (err, result) => {
                 if (err) {
@@ -90,7 +93,7 @@ export default class ResearchPublicationWorker {
                 if (result && result.length > 0) {
                     resolve(BaseResponse.success(result));
                 } else {
-                    resolve(BaseResponse.error('ResearchPublication not found'));
+                    resolve(BaseResponse.error('Research or Publication not found'));
                 }
             });
         });
