@@ -14,7 +14,7 @@ export class App {
     }
     private initController(_c:IController[]){
         _c.forEach((controller) =>{
-            this._kernel._defaultApps.use("/api/v1",controller.router)
+            this._kernel._defaultApps.use("/",controller.router)
         })
     }
     private connectStorage(){
